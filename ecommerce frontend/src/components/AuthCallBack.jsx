@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { saveTokens } from "../services/authservice";
 
@@ -6,12 +6,70 @@ const API_GATEWAY =
     import.meta.env.VITE_API_GATEWAY ||
     "http://localhost:8081";
 
+const wait = (milliseconds) =>
+    new Promise((resolve) =>
+        setTimeout(resolve, milliseconds)
+    );
+
 export default function AuthCallback() {
+    const [errorMessage, setErrorMessage] =
+        useState("");
+
     useEffect(() => {
+        async function syncCustomer(accessToken) {
+            const maxAttempts = 3;
+
+            for (
+                let attempt = 1;
+                attempt <= maxAttempts;
+                attempt++
+            ) {
+                const response = await fetch(
+                    `${API_GATEWAY}/CUSTOMER-SERVICE/customers/me/sync`,
+                    {
+                        method: "POST",
+                        headers: {
+                            Authorization:
+                                `Bearer ${accessToken}`
+                        }
+                    }
+                );
+
+                if (response.ok) {
+                    return response.json();
+                }
+
+                const errorText =
+                    await response.text();
+
+                const retryableStatuses = [
+                    502,
+                    503,
+                    504
+                ];
+
+                const shouldRetry =
+                    retryableStatuses.includes(
+                        response.status
+                    ) &&
+                    attempt < maxAttempts;
+
+                if (!shouldRetry) {
+                    throw new Error(
+                        `Customer sync failed: ${response.status} ${errorText}`
+                    );
+                }
+
+                await wait(3000);
+            }
+        }
+
         async function finishSocialLogin() {
             try {
                 const params =
-                    new URLSearchParams(window.location.search);
+                    new URLSearchParams(
+                        window.location.search
+                    );
 
                 const code =
                     params.get("code");
@@ -37,53 +95,29 @@ export default function AuthCallback() {
                 );
 
                 if (!response.ok) {
-                    const text = await response.text();
-                    throw new Error(text);
-                }
-
-                const tokens = await response.json();
-
-                saveTokens(tokens);
-
-                const syncResponse = await fetch(
-                    `${API_GATEWAY}/CUSTOMER-SERVICE/customers/me/sync`,
-                    {
-                        method: "POST",
-                        headers: {
-                            Authorization:
-                                `Bearer ${tokens.access_token}`
-                        }
-                    }
-                );
-
-                if (!syncResponse.ok) {
                     const text =
-                        await syncResponse.text();
+                        await response.text();
 
                     throw new Error(
-                        `Customer sync failed: ${syncResponse.status} ${text}`
+                        `Social login failed: ${response.status} ${text}`
                     );
                 }
 
+                const tokens =
+                    await response.json();
+
                 const customer =
-                    await syncResponse.json();
+                    await syncCustomer(
+                        tokens.access_token
+                    );
 
                 console.log(
                     "SOCIAL CUSTOMER SYNCED:",
                     customer
                 );
 
-                console.log({
-                    hasAccessToken:
-                        !!localStorage.getItem(
-                            "novacart-access-token"
-                        ),
-
-                    hasRefreshToken:
-                        !!localStorage.getItem(
-                            "novacart-refresh-token"
-                        )
-                });
+                // Save login only after customer sync succeeds
+                saveTokens(tokens);
 
                 sessionStorage.removeItem(
                     "pkce_code_verifier"
@@ -95,6 +129,12 @@ export default function AuthCallback() {
                     "SOCIAL LOGIN CALLBACK FAILED:",
                     error
                 );
+
+                setErrorMessage(
+                    error instanceof Error
+                        ? error.message
+                        : "Social login failed"
+                );
             }
         }
 
@@ -103,7 +143,9 @@ export default function AuthCallback() {
 
     return (
         <div style={{ padding: "40px" }}>
-            Signing you in...
+            {errorMessage
+                ? `Sign-in failed: ${errorMessage}`
+                : "Signing you in..."}
         </div>
     );
 }

@@ -1,3 +1,4 @@
+````
 # Event-Driven-Secure-OAuth2-based-Ecommerce-Services
 
 An event-driven distributed e-commerce system built around independently deployable microservices, OAuth2/OIDC security, database-per-service data ownership, service discovery, asynchronous messaging, and private Amazon S3 object storage.
@@ -58,7 +59,7 @@ EUREKA_URL=https://<your-eureka-service>.onrender.com/eureka
 
 Create one Docker-based Render web service for each directory below.
 
-#### Customer Service â€” `customer-service`
+#### Customer Service -- `customer-service`
 
 ```text
 CUSTOMER_DB_URL=jdbc:postgresql://<host>:<port>/<database>
@@ -72,7 +73,7 @@ KEYCLOAK_CLIENT_SECRET=<service-client-secret>
 EUREKA_URL=https://<your-eureka-service>.onrender.com/eureka
 ```
 
-#### Product Service â€” `product-service`
+#### Product Service -- `product-service`
 
 ```text
 PRODUCT_DB_URL=jdbc:postgresql://<host>:<port>/<database>
@@ -87,7 +88,7 @@ EUREKA_URL=https://<your-eureka-service>.onrender.com/eureka
 
 The AWS identity should receive only the S3 permissions required for this application's image objects.
 
-#### Order Service â€” `order-service`
+#### Order Service -- `order-service`
 
 ```text
 ORDER_DB_URL=jdbc:postgresql://<host>:<port>/<database>
@@ -201,9 +202,9 @@ The repository contains sample database data under:
 
 ```text
 db-init/
-â”œâ”€â”€ customerdb.sql
-â”œâ”€â”€ productdb.sql
-â””â”€â”€ orderdb.sql
+|-- customerdb.sql
+|-- productdb.sql
+`-- orderdb.sql
 ```
 
 When PostgreSQL starts with a fresh database volume, these scripts automatically initialize the Customer, Product, and Order databases.
@@ -214,7 +215,7 @@ The Keycloak realm configuration is stored under:
 
 ```text
 keycloak-import/
-â””â”€â”€ ecommerce-app-realm-sanitized.json
+`-- ecommerce-app-realm-sanitized.json
 ```
 
 The realm is automatically imported when Keycloak starts.
@@ -318,7 +319,7 @@ Customer creation creates the corresponding user in Keycloak. You can then authe
 In Postman, open:
 
 ```text
-Authorization â†’ Type: OAuth 2.0 â†’ Get New Access Token
+Authorization -> Type: OAuth 2.0 -> Get New Access Token
 ```
 
 Configure the OAuth2 request:
@@ -357,11 +358,11 @@ You can verify the security behavior using both tokens:
 
 | Request | Expected Result |
 |---|---|
-| ADMIN token â†’ ADMIN API | `200 / Success` |
-| ADMIN token â†’ USER API | `200 / Success` if ADMIN is permitted |
-| USER token â†’ USER API | `200 / Success` |
-| USER token â†’ ADMIN-only API | `403 Forbidden` |
-| Missing/invalid token â†’ Protected API | `401 Unauthorized` |
+| ADMIN token -> ADMIN API | `200 / Success` |
+| ADMIN token -> USER API | `200 / Success` if ADMIN is permitted |
+| USER token -> USER API | `200 / Success` |
+| USER token -> ADMIN-only API | `403 Forbidden` |
+| Missing/invalid token -> Protected API | `401 Unauthorized` |
 
 This allows both **OAuth2 authentication and role-based authorization (RBAC)** to be tested directly from Postman.
 
@@ -910,35 +911,26 @@ to verify the Kafka event-publishing path.
 
 ```text
 fullstack-deployed-event-driven-oauth2-ecommerce-services/
-â”‚
-â”œâ”€â”€ authandgatewayservice/
-â”‚   â””â”€â”€ OAuth2 security + API Gateway
-â”‚
-â”œâ”€â”€ customer-service/
-â”‚   â””â”€â”€ Customer management
-â”‚
-â”œâ”€â”€ product-service/
-â”‚   â””â”€â”€ Product catalog + Amazon S3 image management
-â”‚
-â”œâ”€â”€ order-service/
-â”‚   â””â”€â”€ Order processing + Kafka producer
-â”‚
-â”œâ”€â”€ service-registry/
-â”‚   â””â”€â”€ Eureka Service Registry
-â”‚
-â”œâ”€â”€ ecommerce frontend/
-â”‚   â””â”€â”€ React + Vite frontend
-â”‚
-â”œâ”€â”€ db-init/
-â”‚   â”œâ”€â”€ customerdb.sql
-â”‚   â”œâ”€â”€ productdb.sql
-â”‚   â””â”€â”€ orderdb.sql
-â”‚
-â”œâ”€â”€ keycloak-import/
-â”‚   â””â”€â”€ ecommerce-app-realm-sanitized.json
-â”‚
-â”œâ”€â”€ docker-compose.yml
-â””â”€â”€ README.md
+|-- authandgatewayservice/
+|   `-- OAuth2 security + API Gateway
+|-- customer-service/
+|   `-- Customer management
+|-- product-service/
+|   `-- Product catalog + Amazon S3 image management
+|-- order-service/
+|   `-- Order processing + Kafka producer
+|-- service-registry/
+|   `-- Eureka Service Registry
+|-- ecommerce frontend/
+|   `-- React + Vite frontend
+|-- db-init/
+|   |-- customerdb.sql
+|   |-- productdb.sql
+|   `-- orderdb.sql
+|-- keycloak-import/
+|   `-- ecommerce-app-realm-sanitized.json
+|-- docker-compose.yml
+`-- README.md
 ```
 
 ---
@@ -990,3 +982,4 @@ The architecture can be extended with:
 - Centralized logging and monitoring
 - OpenAPI / Swagger
 - CI/CD pipeline
+````

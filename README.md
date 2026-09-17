@@ -4,12 +4,148 @@ An event-driven distributed e-commerce system built around independently deploya
 
 Customer, Product, and Order capabilities are separated into independent services with their own PostgreSQL databases. Keycloak provides centralized OAuth2/OIDC identity and RBAC, while Eureka provides service discovery. The Product Service uses Amazon S3 presigned URLs for secure product-image uploads and retrieval. The Order Service orchestrates synchronous service calls for customer and product data, persists transactional order state, and publishes domain events to Apache Kafka, enabling downstream workflows to evolve as loosely coupled event consumers.
 
-# Deployment
+# Deployment Overview
 
 - The React frontend is deployed on **Vercel**.
 - Customer Service, Product Service, Order Service, Auth and API Gateway, Eureka Service Registry, and Keycloak are deployed on **Render**.
 - Apache Kafka is deployed on **Aiven**.
 - Product images are stored in a private **Amazon S3** bucket and accessed using temporary presigned URLs.
+
+## Cloud Deployment Instructions
+
+Deploy the components in this order so each dependent service has a working URL before it starts:
+
+1. PostgreSQL databases, Aiven Kafka, and the private S3 bucket
+2. Keycloak
+3. Eureka Service Registry
+4. Customer, Product, and Order services
+5. Auth and API Gateway
+6. React frontend on Vercel
+
+### 1. Provision the managed infrastructure
+
+Create separate PostgreSQL databases for Customer, Product, Order, and Keycloak. Create an Aiven Kafka service and an `order-events` topic. Create a private Amazon S3 bucket and configure its CORS policy to allow the deployed frontend to use presigned upload and retrieval URLs.
+
+Never commit database credentials, AWS credentials, Kafka credentials, or Keycloak secrets to this repository.
+
+### 2. Deploy Keycloak on Render
+
+Create a Render web service with:
+
+| Setting | Value |
+|---|---|
+| Runtime | Docker |
+| Root Directory | `keycloak-import` |
+| Dockerfile | `./Dockerfile` |
+
+Configure the Keycloak database variables required by the Docker image, including `KC_DB`, `KC_DB_URL`, `KC_DB_USERNAME`, and `KC_DB_PASSWORD`. Configure the bootstrap administrator credentials as protected Render environment variables.
+
+After deployment, add the Vercel domain to the Keycloak client's valid redirect URIs and web origins. The callback path used by this application is:
+
+```text
+https://<your-vercel-domain>/auth/callback
+```
+
+### 3. Deploy Eureka Service Registry on Render
+
+Create a Docker-based Render web service using `service-registry` as the root directory. Copy its public Render URL; the other backend services use it through:
+
+```text
+EUREKA_URL=https://<your-eureka-service>.onrender.com/eureka
+```
+
+### 4. Deploy the business services on Render
+
+Create one Docker-based Render web service for each directory below.
+
+#### Customer Service â€” `customer-service`
+
+```text
+CUSTOMER_DB_URL=jdbc:postgresql://<host>:<port>/<database>
+CUSTOMER_DB_USERNAME=<username>
+CUSTOMER_DB_PASSWORD=<password>
+KEYCLOAK_ISSUER_URI=https://<your-keycloak-service>.onrender.com/realms/ecommerce-app
+KEYCLOAK_BASE_URL=https://<your-keycloak-service>.onrender.com
+KEYCLOAK_REALM=ecommerce-app
+KEYCLOAK_CLIENT_ID=<service-client-id>
+KEYCLOAK_CLIENT_SECRET=<service-client-secret>
+EUREKA_URL=https://<your-eureka-service>.onrender.com/eureka
+```
+
+#### Product Service â€” `product-service`
+
+```text
+PRODUCT_DB_URL=jdbc:postgresql://<host>:<port>/<database>
+PRODUCT_DB_USERNAME=<username>
+PRODUCT_DB_PASSWORD=<password>
+AWS_ACCESS_KEY_ID=<aws-access-key>
+AWS_SECRET_ACCESS_KEY=<aws-secret-key>
+AWS_REGION=eu-north-1
+AWS_S3_BUCKET_NAME=<private-bucket-name>
+EUREKA_URL=https://<your-eureka-service>.onrender.com/eureka
+```
+
+The AWS identity should receive only the S3 permissions required for this application's image objects.
+
+#### Order Service â€” `order-service`
+
+```text
+ORDER_DB_URL=jdbc:postgresql://<host>:<port>/<database>
+ORDER_DB_USERNAME=<username>
+ORDER_DB_PASSWORD=<password>
+KAFKA_BOOTSTRAP_SERVERS=<aiven-host>:<aiven-port>
+KAFKA_ORDER_TOPIC=order-events
+KAFKA_SECURITY_PROTOCOL=SASL_SSL
+KAFKA_SASL_MECHANISM=SCRAM-SHA-256
+KAFKA_USERNAME=<aiven-username>
+KAFKA_PASSWORD=<aiven-password>
+EUREKA_URL=https://<your-eureka-service>.onrender.com/eureka
+```
+
+Download Aiven's CA certificate and add it to the Order Service as a Render secret file mounted at:
+
+```text
+/etc/secrets/ca.pem
+```
+
+### 5. Deploy Auth and API Gateway on Render
+
+Create a Docker-based Render web service using `authandgatewayservice` as the root directory.
+
+```text
+JWK_SET_URI=https://<your-keycloak-service>.onrender.com/realms/ecommerce-app/protocol/openid-connect/certs
+KEYCLOAK_REALM_URL=https://<your-keycloak-service>.onrender.com/realms/ecommerce-app
+KEYCLOAK_CLIENT_ID=AuthFlowClient
+FRONTEND_URL=https://<your-vercel-domain>
+FRONTEND_CALLBACK_URL=https://<your-vercel-domain>/auth/callback
+EUREKA_URL=https://<your-eureka-service>.onrender.com/eureka
+CUSTOMER_SERVICE_URL=https://<your-customer-service>.onrender.com
+PRODUCT_SERVICE_URL=https://<your-product-service>.onrender.com
+ORDER_SERVICE_URL=https://<your-order-service>.onrender.com
+```
+
+Direct service URLs are shown because they are often more reliable than registry-based routing when Render services use public HTTPS endpoints.
+
+### 6. Deploy the React frontend on Vercel
+
+Import this repository into Vercel and set the root directory to `ecommerce frontend`. Configure:
+
+```text
+VITE_API_GATEWAY=https://<your-api-gateway>.onrender.com
+VITE_KEYCLOAK_URL=https://<your-keycloak-service>.onrender.com
+VITE_KEYCLOAK_REALM=ecommerce-app
+VITE_KEYCLOAK_CLIENT_ID=AuthFlowClient
+```
+
+Redeploy the frontend after changing any `VITE_` variable because Vite embeds these values during the build.
+
+### 7. Verify the deployment
+
+1. Open the Eureka dashboard and confirm that Customer, Product, and Order services are registered.
+2. Sign in through Keycloak from the Vercel frontend.
+3. Verify product retrieval through the API Gateway.
+4. As an administrator, request a presigned S3 upload URL and upload a product image.
+5. Place an order and confirm that an `OrderEvent` reaches the Aiven `order-events` topic.
 
 # Running the Project
 
@@ -28,13 +164,13 @@ Make sure the following are installed:
 ## 1. Clone the Repository
 
 ```bash
-git clone https://github.com/ManjuAnand9/event-driven-oauth-ecommerce-services.git
+git clone https://github.com/ManjuAnand9/fullstack-deployed-event-driven-oauth2-ecommerce-services.git
 ```
 
 Move into the project directory:
 
 ```bash
-cd event-driven-oauth-ecommerce-services
+cd fullstack-deployed-event-driven-oauth2-ecommerce-services
 ```
 
 ---
@@ -65,9 +201,9 @@ The repository contains sample database data under:
 
 ```text
 db-init/
-â”œâ”€â”€ customer-init.sql
-â”œâ”€â”€ product-init.sql
-â””â”€â”€ order-init.sql
+â”œâ”€â”€ customerdb.sql
+â”œâ”€â”€ productdb.sql
+â””â”€â”€ orderdb.sql
 ```
 
 When PostgreSQL starts with a fresh database volume, these scripts automatically initialize the Customer, Product, and Order databases.
@@ -78,7 +214,7 @@ The Keycloak realm configuration is stored under:
 
 ```text
 keycloak-import/
-â””â”€â”€ ecommerce app-realm.json
+â””â”€â”€ ecommerce-app-realm-sanitized.json
 ```
 
 The realm is automatically imported when Keycloak starts.
@@ -773,7 +909,7 @@ to verify the Kafka event-publishing path.
 # Project Structure
 
 ```text
-event-driven-oauth-ecommerce-services/
+fullstack-deployed-event-driven-oauth2-ecommerce-services/
 â”‚
 â”œâ”€â”€ authandgatewayservice/
 â”‚   â””â”€â”€ OAuth2 security + API Gateway
@@ -790,13 +926,16 @@ event-driven-oauth-ecommerce-services/
 â”œâ”€â”€ service-registry/
 â”‚   â””â”€â”€ Eureka Service Registry
 â”‚
+â”œâ”€â”€ ecommerce frontend/
+â”‚   â””â”€â”€ React + Vite frontend
+â”‚
 â”œâ”€â”€ db-init/
-â”‚   â”œâ”€â”€ customer-init.sql
-â”‚   â”œâ”€â”€ product-init.sql
-â”‚   â””â”€â”€ order-init.sql
+â”‚   â”œâ”€â”€ customerdb.sql
+â”‚   â”œâ”€â”€ productdb.sql
+â”‚   â””â”€â”€ orderdb.sql
 â”‚
 â”œâ”€â”€ keycloak-import/
-â”‚   â””â”€â”€ ecommerce app-realm.json
+â”‚   â””â”€â”€ ecommerce-app-realm-sanitized.json
 â”‚
 â”œâ”€â”€ docker-compose.yml
 â””â”€â”€ README.md

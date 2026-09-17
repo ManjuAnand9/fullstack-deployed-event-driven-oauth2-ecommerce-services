@@ -1,4 +1,4 @@
-````
+
 # Event-Driven-Secure-OAuth2-based-Ecommerce-Services
 
 An event-driven distributed e-commerce system built around independently deployable microservices, OAuth2/OIDC security, database-per-service data ownership, service discovery, asynchronous messaging, and private Amazon S3 object storage.
@@ -982,4 +982,4 @@ The architecture can be extended with:
 - Centralized logging and monitoring
 - OpenAPI / Swagger
 - CI/CD pipeline
-````
+

@@ -1,6 +1,10 @@
 
 # Event-Driven-Secure-OAuth2-based-Ecommerce-Services
 
+Refer to the below link
+
+https://event-driven-oauth2-ecommerce-services-1ke6dsx1n-mhs18.vercel.app/workflow.html
+
 An event-driven distributed e-commerce system built around independently deployable microservices, OAuth2/OIDC security, database-per-service data ownership, service discovery, asynchronous messaging, and private Amazon S3 object storage.
 
 Customer, Product, and Order capabilities are separated into independent services with their own PostgreSQL databases. Keycloak provides centralized OAuth2/OIDC identity and RBAC, while Eureka provides service discovery. The Product Service uses Amazon S3 presigned URLs for secure product-image uploads and retrieval. The Order Service orchestrates synchronous service calls for customer and product data, persists transactional order state, and publishes domain events to Apache Kafka, enabling downstream workflows to evolve as loosely coupled event consumers.

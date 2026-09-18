@@ -3818,7 +3818,28 @@ button {
 
 .workflow-link {
   position: relative;
-  z-index: 10;
+  z-index: 9999;
   pointer-events: auto;
+
+  display: inline-flex;
+  align-items: center;
+
+  padding: 12px 18px;
+  border: none;
+  border-radius: 10px;
+
+  background: #111827;
+  color: white;
+
+  font: inherit;
+  font-weight: 700;
   cursor: pointer;
+}
+
+.hero-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  margin-top: 10px;
 }

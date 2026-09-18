@@ -11,17 +11,31 @@ export default function Hero({ onShop }) {
           Distributed ecommerce platform showcasing resilient REST APIs, loosely coupled microservices, synchronous and asynchronous inter-service communication, event-driven email notifications, API Gateway routing, Kafka-driven workflows, OAuth2/JWT security, social authentication, isolated SQL databases, S3 object storage, and Dockerized deployments.
         </p>
 
-        <a
-          href="/workflow.html"
-          className="workflow-link"
-        >
-          Explore System Architecture & Workflow →
-        </a>
+        <div className="hero-actions">
 
-        <button className="shop-button" type="button" onClick={onShop}>
-          Shop now
-        </button>
+          <button className="shop-button" type="button" onClick={onShop}>
+            Shop now
+          </button>
+
+          <br>
+          </br>
+
+
+
+          <button
+            type="button"
+            className="workflow-link"
+            onClick={() => {
+              window.location.href = "/workflow.html";
+            }}
+          >
+            Explore System Architecture &amp; Workflow &rarr;
+          </button>
+
+        </div>
+
+
       </div>
-    </section>
+    </section >
   );
 }

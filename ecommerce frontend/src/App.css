@@ -3795,3 +3795,23 @@ button {
   line-height: 1.4;
   text-align: center;
 }
+
+
+.architecture-image {
+  margin-top: 32px;
+  padding: 24px;
+  text-align: center;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  box-shadow: 0 8px 25px rgba(15, 23, 42, 0.06);
+}
+
+.architecture-image img {
+  display: block;
+  width: 100%;
+  max-width: 1200px;
+  height: auto;
+  margin: 0 auto;
+  object-fit: contain;
+}

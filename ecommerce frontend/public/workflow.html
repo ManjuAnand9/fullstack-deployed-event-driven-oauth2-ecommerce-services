@@ -452,6 +452,32 @@
             font-size: 24px;
         }
 
+        .diagram-image {
+            margin-top: 30px;
+            padding: 18px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+        }
+
+        .diagram-image img {
+            display: block;
+            width: 100%;
+            max-width: 1000px;
+            height: auto;
+            margin: 0 auto;
+            border-radius: 10px;
+        }
+
+        .diagram-caption {
+            margin: 12px 4px 0;
+            color: #64748b;
+            font-size: 12px;
+            line-height: 1.6;
+            text-align: center;
+        }
+
         /* =========================
        SERVICE CARDS
        ========================= */
@@ -820,6 +846,54 @@
         }
 
         /* =========================
+       ACCESS MATRIX
+       ========================= */
+
+        .access-table-wrap {
+            overflow-x: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            background: white;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+        }
+
+        .access-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 620px;
+        }
+
+        .access-table th,
+        .access-table td {
+            padding: 14px 18px;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: left;
+            font-size: 12px;
+        }
+
+        .access-table th {
+            color: #0f172a;
+            background: #f8fafc;
+            font-size: 11px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .access-table tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .access-yes {
+            color: #047857;
+            font-weight: 800;
+        }
+
+        .access-no {
+            color: #be123c;
+            font-weight: 800;
+        }
+
+        /* =========================
        FOOTER
        ========================= */
 
@@ -940,7 +1014,7 @@
                 loosely coupled microservices, synchronous and asynchronous
                 service-to-service communication, event-driven workflows,
                 API Gateway routing, Kafka messaging, OAuth2/JWT security,
-                isolated sql databases, private S3 object storage,
+                isolated PostgreSQL databases, private S3 object storage,
                 and Dockerized services.
             </p>
 
@@ -960,7 +1034,7 @@
         </div>
 
         <div class="metric-card">
-            <strong>Sync + Async</strong>
+            <strong>Inter Service Communication Sync+ Async</strong>
             <span>
                 REST + Kafka communication
             </span>
@@ -969,16 +1043,75 @@
         <div class="metric-card">
             <strong>OAuth2 / JWT</strong>
             <span>
-                Authentication and RBAC
+                Auth Grant Flow-user authentication
+                <br> client cred grant flow- service to service authentication
             </span>
         </div>
 
         <div class="metric-card">
-            <strong>Database per Service</strong>
+            <strong>Independant Database per Service</strong>
             <span>
                 Independent data ownership
             </span>
         </div>
+
+
+        <div class="metric-card">
+            <strong>Social login through Keycloak</strong>
+            <span>
+                Google Sign-In is enabled through Keycloak. Other social
+                identity providers are not currently enabled.<br>
+
+            </span>
+        </div>
+
+        <div class="metric-card">
+            <strong>Role Based Authorization</strong>
+            <span>
+                USER AND ADMIN
+
+            </span>
+        </div>
+
+
+
+        <div class="metric-card">
+            <strong>S3 presigned uploads and image retrieval
+            </strong>
+            <span>
+                Private images with time-limited upload and download access
+            </span>
+        </div>
+
+
+        <div class="metric-card">
+            <strong>Product pagination and sorting
+
+            </strong>
+            <span>
+                Server-side page, size and sorting controls
+            </span>
+        </div>
+
+        <div class="metric-card">
+            <strong>Independently deployed cloud services
+
+
+            </strong>
+            <span>
+                Services can be built, deployed and scaled separately
+            </span>
+        </div>
+
+
+        <div class="metric-card">
+            <strong>Eureka service discovery</strong>
+            <span>
+                Dynamic registration and service lookup
+            </span>
+        </div>
+
+
 
     </div>
 
@@ -995,7 +1128,7 @@
         </div>
 
         <h2>
-            Core platform capabilities
+            UI Functionalities
         </h2>
 
         <p class="section-description">
@@ -1210,7 +1343,7 @@
 
 
 
-            <div class="functionality-card">
+            <!-- <div class="functionality-card">
 
                 <div class="functionality-icon">
                     ☁️
@@ -1221,21 +1354,21 @@
                     <span class="badge">
                         S3
                     </span>
-                </div>
+                </div> -->
 
-                <p>
-                    Product images remain private in Amazon S3 while
-                    temporary presigned upload and download URLs provide
-                    controlled browser access.
-                </p>
-
-                <div class="tech-tags">
-                    <span class="tech-tag">Amazon S3</span>
-                    <span class="tech-tag">Presigned PUT</span>
-                    <span class="tech-tag">Presigned GET</span>
-                </div>
-
+            <!-- <p>
+                Product images remain private in Amazon S3 while
+                temporary presigned upload and download URLs provide
+                controlled browser access.
+            </p> -->
+            <!-- 
+            <div class="tech-tags">
+                <span class="tech-tag">Amazon S3</span>
+                <span class="tech-tag">Presigned PUT</span>
+                <span class="tech-tag">Presigned GET</span>
             </div>
+
+        </div> -->
 
 
 
@@ -1267,91 +1400,141 @@
 
 
 
-            <div class="functionality-card">
 
-                <div class="functionality-icon">
-                    🚪
-                </div>
 
-                <div class="functionality-header">
-                    <h3>API Gateway Routing</h3>
-                    <span class="badge">
-                        Gateway
-                    </span>
-                </div>
+            <!-- 
+            <p>
+                Services use synchronous REST communication where an
+                immediate response is required and Kafka where workflows
+                can be asynchronously decoupled.
+            </p> -->
 
-                <p>
-                    Client traffic enters through a centralized gateway
-                    responsible for routing requests to the correct
-                    backend microservice.
-                </p>
-
-                <div class="tech-tags">
-                    <span class="tech-tag">Spring Cloud Gateway</span>
-                    <span class="tech-tag">JWT</span>
-                </div>
-
+            <!-- <div class="tech-tags">
+                <span class="tech-tag">REST</span>
+                <span class="tech-tag">Feign</span>
+                <span class="tech-tag">Kafka</span>
             </div>
+
+        </div> -->
+
+
+
+
 
 
 
             <div class="functionality-card">
 
                 <div class="functionality-icon">
-                    ↔️
+                    🧭
                 </div>
 
                 <div class="functionality-header">
-                    <h3>Inter-Service Communication</h3>
-
-                    <span class="badge">
-                        Distributed
-                    </span>
+                    <h3>Developer API-Flow View</h3>
+                    <span class="badge">Observability</span>
                 </div>
 
                 <p>
-                    Services use synchronous REST communication where an
-                    immediate response is required and Kafka where workflows
-                    can be asynchronously decoupled.
+                    A developer-facing view exposes live API requests,
+                    responses and the end-to-end service flow for each action.
                 </p>
 
                 <div class="tech-tags">
-                    <span class="tech-tag">REST</span>
-                    <span class="tech-tag">Feign</span>
-                    <span class="tech-tag">Kafka</span>
+                    <span class="tech-tag">Request</span>
+                    <span class="tech-tag">Response</span>
+                    <span class="tech-tag">Service Flow</span>
                 </div>
 
             </div>
 
 
+        </div>
 
-            <div class="functionality-card">
-
-                <div class="functionality-icon">
-                    🗄
-                </div>
-
-                <div class="functionality-header">
-                    <h3>Independent Persistence</h3>
-
-                    <span class="badge">
-                        Isolation
-                    </span>
-                </div>
-
-                <p>
-                    Services own their own PostgreSQL persistence rather
-                    than relying on one shared application database.
-                </p>
-
-                <div class="tech-tags">
-                    <span class="tech-tag">PostgreSQL</span>
-                    <span class="tech-tag">DB per Service</span>
-                </div>
-
-            </div>
+    </section>
 
 
+
+    <!-- ===================================================
+     USER / ADMIN ACTIONS
+     =================================================== -->
+
+    <section class="section">
+
+        <div class="section-tag">
+            Roles and Permissions
+        </div>
+
+        <h2>
+            User and admin capabilities
+        </h2>
+
+        <p class="section-description">
+            Role-based authorization separates customer shopping workflows
+            from administrative product and customer management.
+        </p>
+
+        <div class="access-table-wrap">
+            <table class="access-table">
+                <thead>
+                    <tr>
+                        <th>Action</th>
+                        <th>User</th>
+                        <th>Admin</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Regular sign-in</td>
+                        <td class="access-yes">Yes</td>
+                        <td class="access-yes">Yes</td>
+                    </tr>
+                    <tr>
+                        <td>Google social sign-in</td>
+                        <td class="access-yes">Yes</td>
+                        <td class="access-no">No</td>
+                    </tr>
+                    <tr>
+                        <td>Create an account</td>
+                        <td class="access-yes">Yes</td>
+                        <td class="access-no">No</td>
+                    </tr>
+                    <tr>
+                        <td>Browse products and product details</td>
+                        <td class="access-yes">Yes</td>
+                        <td class="access-yes">Yes</td>
+                    </tr>
+                    <tr>
+                        <td>Add to cart and view cart</td>
+                        <td class="access-yes">Yes</td>
+                        <td class="access-yes">Yes</td>
+                    </tr>
+                    <tr>
+                        <td>Place an order</td>
+                        <td class="access-yes">Yes</td>
+                        <td class="access-no">No</td>
+                    </tr>
+                    <tr>
+                        <td>View personal order history</td>
+                        <td class="access-yes">Yes</td>
+                        <td class="access-no">No</td>
+                    </tr>
+                    <tr>
+                        <td>Add a new product</td>
+                        <td class="access-no">No</td>
+                        <td class="access-yes">Yes</td>
+                    </tr>
+                    <tr>
+                        <td>Manage products and customers</td>
+                        <td class="access-no">No</td>
+                        <td class="access-yes">Yes</td>
+                    </tr>
+                    <tr>
+                        <td>Open developer API-flow view</td>
+                        <td class="access-yes">Yes</td>
+                        <td class="access-yes">Yes</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
     </section>
@@ -1372,117 +1555,18 @@
             High-level system design
         </h2>
 
+        <div class="diagram-image">
+            <img src="./images/SystemArchi.png" alt="NovaCart high-level system architecture" />
+            <p class="diagram-caption">High-level view of the client, gateway, services, messaging, databases and object
+                storage.</p>
+        </div>
+
         <p class="section-description">
             Client requests enter through the API Gateway.
             Business capabilities are divided into independent
             microservices with isolated persistence and explicit
             communication boundaries.
         </p>
-
-
-        <div class="architecture">
-
-
-            <div class="architecture-row">
-
-                <div class="architecture-box">
-                    React Client
-                </div>
-
-                <span class="architecture-arrow">
-                    →
-                </span>
-
-                <div class="architecture-box gateway">
-                    API Gateway
-                </div>
-
-                <span class="architecture-arrow">
-                    →
-                </span>
-
-                <div class="architecture-box">
-                    OAuth2 / JWT
-                </div>
-
-            </div>
-
-
-            <div class="down-arrow">
-                ↓
-            </div>
-
-
-            <div class="architecture-row">
-
-                <div class="architecture-box">
-                    Customer Service
-                </div>
-
-                <div class="architecture-box">
-                    Product Service
-                </div>
-
-                <div class="architecture-box">
-                    Order Service
-                </div>
-
-                <div class="architecture-box">
-                    Inventory Service
-                </div>
-
-            </div>
-
-
-            <div class="down-arrow">
-                ↓
-            </div>
-
-
-            <div class="architecture-row">
-
-                <div class="architecture-box kafka">
-                    Apache Kafka
-                </div>
-
-                <div class="architecture-box">
-                    Notification Service
-                </div>
-
-                <div class="architecture-box s3">
-                    Amazon S3
-                </div>
-
-            </div>
-
-
-            <div class="down-arrow">
-                ↓
-            </div>
-
-
-            <div class="architecture-row">
-
-                <div class="architecture-box">
-                    Customer DB
-                </div>
-
-                <div class="architecture-box">
-                    Product DB
-                </div>
-
-                <div class="architecture-box">
-                    Order DB
-                </div>
-
-                <div class="architecture-box">
-                    Inventory DB
-                </div>
-
-            </div>
-
-
-        </div>
 
     </section>
 
@@ -1507,7 +1591,6 @@
             exposes APIs or events instead of directly sharing its
             internal database.
         </p>
-
 
         <div class="service-grid">
 
@@ -1639,7 +1722,7 @@
                 <div class="service-title">
 
                     <h3>
-                        Notification Service
+                        Inventory Service
                     </h3>
 
                     <span class="badge planned">
@@ -1649,8 +1732,7 @@
                 </div>
 
                 <p>
-                    Will consume Kafka order events and send transactional
-                    customer emails independently of Order Service.
+                    Will consume Kafka order events and changes inventory qty asynchronously
                 </p>
 
                 <div class="tech-tags">
@@ -1684,6 +1766,27 @@
 
     <section class="section">
 
+        <div class="section-tag">Authentication Flow</div>
+
+        <h2>OAuth2 authorization-code processing</h2>
+
+        <p class="section-description">
+            Keycloak centralizes regular and Google sign-in. The React client
+            uses Authorization Code Flow with PKCE and forwards access tokens
+            through the gateway to protected APIs.
+        </p>
+
+        <div class="diagram-image">
+            <img src="./images/AuthNAuthZWorkflow.png" alt="OAuth2 and JWT authentication and authorization sequence" />
+            <p class="diagram-caption">Keycloak authentication, JWT validation and role-based request authorization.</p>
+        </div>
+
+
+
+    </section>
+
+    <section class="section">
+
         <div class="section-tag">
             Request Lifecycle
         </div>
@@ -1698,172 +1801,13 @@
             asynchronous event publication.
         </p>
 
-
-        <div class="workflow">
-
-
-            <div class="workflow-step">
-
-                <div class="step-number">
-                    01
-                </div>
-
-                <div>
-
-                    <h3>
-                        User initiates checkout
-                    </h3>
-
-                    <p>
-                        React sends the order request through the API
-                        Gateway using the authenticated session.
-                    </p>
-
-                    <span class="code">
-                        React → API Gateway
-                    </span>
-
-                </div>
-
-            </div>
-
-
-
-            <div class="workflow-step">
-
-                <div class="step-number">
-                    02
-                </div>
-
-                <div>
-
-                    <h3>
-                        Customer identity is resolved
-                    </h3>
-
-                    <p>
-                        The authenticated user's email is resolved against
-                        Customer Service to obtain the application customer ID.
-                    </p>
-
-                    <span class="code">
-                        JWT Email → Customer Service → customerId
-                    </span>
-
-                </div>
-
-            </div>
-
-
-
-            <div class="workflow-step">
-
-                <div class="step-number">
-                    03
-                </div>
-
-                <div>
-
-                    <h3>
-                        Order Service calls downstream services
-                    </h3>
-
-                    <p>
-                        Required customer and product information is retrieved
-                        through synchronous service-to-service REST calls.
-                    </p>
-
-                    <span class="code">
-                        Order → Customer / Product
-                    </span>
-
-                </div>
-
-            </div>
-
-
-
-            <div class="workflow-step">
-
-                <div class="step-number">
-                    04
-                </div>
-
-                <div>
-
-                    <h3>
-                        Order is persisted
-                    </h3>
-
-                    <p>
-                        The final order state is stored in Order Service's
-                        independently owned PostgreSQL database.
-                    </p>
-
-                    <span class="code">
-                        Order Service → Order DB
-                    </span>
-
-                </div>
-
-            </div>
-
-
-
-            <div class="workflow-step">
-
-                <div class="step-number">
-                    05
-                </div>
-
-                <div>
-
-                    <h3>
-                        Kafka event is published
-                    </h3>
-
-                    <p>
-                        Order creation publishes an ORDER_CREATED event
-                        for independently running consumers.
-                    </p>
-
-                    <span class="code">
-                        Order Service → Kafka → ORDER_CREATED
-                    </span>
-
-                </div>
-
-            </div>
-
-
-
-            <div class="workflow-step">
-
-                <div class="step-number">
-                    06
-                </div>
-
-                <div>
-
-                    <h3>
-                        Client receives order ID
-                    </h3>
-
-                    <p>
-                        React receives the successful OrderResponse and
-                        presents the unique order identifier to the customer.
-                    </p>
-
-                    <span class="code">
-                        OrderResponse.orderid → React
-                    </span>
-
-                </div>
-
-            </div>
-
-
+        <div class="diagram-image">
+            <img src="./images/OrderProcessing.png" alt="NovaCart order placement sequence" />
+            <p class="diagram-caption">Order validation, service lookups, persistence and OrderEvent publication.</p>
         </div>
+
+
+
 
     </section>
 
@@ -1888,60 +1832,13 @@
             caller requires an immediate downstream response.
         </p>
 
-
-        <div class="communication-grid">
-
-
-            <div class="communication-card">
-
-                <div class="communication-icon">
-                    ↔
-                </div>
-
-                <h3>
-                    Synchronous REST
-                </h3>
-
-                <p>
-                    Used for request paths where Order Service requires
-                    downstream data before completing the operation.
-                </p>
-
-                <div class="flow-line">
-                    Order Service → Customer Service
-                    <br />
-                    Order Service → Product Service
-                </div>
-
-            </div>
-
-
-
-            <div class="communication-card">
-
-                <div class="communication-icon">
-                    ⚡
-                </div>
-
-                <h3>
-                    Asynchronous Kafka
-                </h3>
-
-                <p>
-                    Used to decouple downstream event processing from
-                    the synchronous customer request path.
-                </p>
-
-                <div class="flow-line">
-                    Order Service → Kafka
-                    <br />
-                    Kafka → Event Consumers
-                </div>
-
-            </div>
-
-
+        <div class="diagram-image">
+            <img src="./images/KafkaFlow.png" alt="Kafka OrderEvent consumers" />
+            <p class="diagram-caption">Order Service publishes events for asynchronous downstream processing.</p>
         </div>
+
+
+
 
     </section>
 
@@ -1966,118 +1863,14 @@
             presigned URLs allow controlled browser uploads and reads.
         </p>
 
-
-        <div class="workflow">
-
-
-            <div class="workflow-step">
-
-                <div class="step-number">
-                    01
-                </div>
-
-                <div>
-
-                    <h3>
-                        Request presigned upload URL
-                    </h3>
-
-                    <p>
-                        React asks Product Service for a temporary S3
-                        upload URL.
-                    </p>
-
-                    <span class="code">
-                        React → Product Service → S3 Presigner
-                    </span>
-
-                </div>
-
-            </div>
-
-
-
-            <div class="workflow-step">
-
-                <div class="step-number">
-                    02
-                </div>
-
-                <div>
-
-                    <h3>
-                        Browser uploads directly to S3
-                    </h3>
-
-                    <p>
-                        Product image bytes do not need to pass through
-                        Product Service.
-                    </p>
-
-                    <span class="code">
-                        Browser → Presigned PUT → S3
-                    </span>
-
-                </div>
-
-            </div>
-
-
-
-            <div class="workflow-step">
-
-                <div class="step-number">
-                    03
-                </div>
-
-                <div>
-
-                    <h3>
-                        Store image key
-                    </h3>
-
-                    <p>
-                        Product Service persists the stable object key
-                        rather than a temporary signed URL.
-                    </p>
-
-                    <span class="code">
-                        imageKey → Product DB
-                    </span>
-
-                </div>
-
-            </div>
-
-
-
-            <div class="workflow-step">
-
-                <div class="step-number">
-                    04
-                </div>
-
-                <div>
-
-                    <h3>
-                        Generate temporary GET URL
-                    </h3>
-
-                    <p>
-                        Product APIs generate a fresh presigned image URL
-                        when product information is requested.
-                    </p>
-
-                    <span class="code">
-                        imageKey → Presigned GET → Browser
-                    </span>
-
-                </div>
-
-            </div>
-
-
+        <div class="diagram-image">
+            <img src="./images/s3Flow.png" alt="S3 image upload and retrieval with presigned URLs" />
+            <p class="diagram-caption">Only admins can upload product images; customers receive temporary read access.
+            </p>
         </div>
+
+
+
 
     </section>
 
@@ -2089,151 +1882,75 @@
 
     <section class="section">
 
-        <div class="section-tag">
-            Persistence
-        </div>
+        <div class="section-tag">Data Ownership</div>
 
-        <h2>
-            Independent data ownership
-        </h2>
+        <h2>Database per service</h2>
 
         <p class="section-description">
-            Each microservice owns its own persistence rather than
-            accessing another service's tables directly.
+            Each business service owns its PostgreSQL database so schemas and persistence can evolve independently.
         </p>
 
-
-        <div class="data-grid">
-
-
-            <div class="data-card">
-
-                <h3>
-                    Customer DB
-                </h3>
-
-                <p>
-                    Profiles, customer identity and shipping information.
-                </p>
-
-            </div>
-
-
-            <div class="data-card">
-
-                <h3>
-                    Product DB
-                </h3>
-
-                <p>
-                    Product metadata, price, category and S3 image keys.
-                </p>
-
-            </div>
-
-
-            <div class="data-card">
-
-                <h3>
-                    Order DB
-                </h3>
-
-                <p>
-                    Orders, order items, payment information and status.
-                </p>
-
-            </div>
-
-
-            <div class="data-card">
-
-                <h3>
-                    Inventory DB
-                </h3>
-
-                <p>
-                    Inventory state owned independently by Inventory Service.
-                </p>
-
-            </div>
-
-
+        <div class="diagram-image">
+            <img src="./images/DBPerService.png" alt="Database-per-service architecture" />
+            <p class="diagram-caption">Customer, Product, Order and Inventory services maintain isolated data stores.
+            </p>
         </div>
 
     </section>
-
-
-
-    <!-- ===================================================
-     SECURITY
-     =================================================== -->
 
     <section class="section">
 
-        <div class="security">
+        <div class="section-tag">Service Discovery</div>
 
-            <div class="section-tag">
-                Security
-            </div>
+        <h2>Eureka registration and dynamic routing</h2>
 
-            <h2>
-                Authentication and authorization
-            </h2>
+        <p class="section-description">
+            Services register with Eureka so the API Gateway can discover healthy instances without fixed addresses.
+        </p>
 
-            <div class="security-grid">
-
-
-                <div class="security-item">
-
-                    <strong>
-                        OAuth2 / JWT
-                    </strong>
-
-                    <span>
-                        Access tokens protect authenticated API requests.
-                    </span>
-
-                </div>
-
-
-                <div class="security-item">
-
-                    <strong>
-                        Role-Based Access Control
-                    </strong>
-
-                    <span>
-                        USER and ADMIN roles protect privileged operations.
-                    </span>
-
-                </div>
-
-
-                <div class="security-item">
-
-                    <strong>
-                        Social Authentication
-                    </strong>
-
-                    <span>
-                        Social identity-provider UI is being integrated
-                        through the centralized authentication layer.
-                    </span>
-
-                </div>
-
-
-            </div>
-
+        <div class="diagram-image">
+            <img src="./images/ServiceDiscovery.png" alt="Eureka service registration and discovery" />
+            <p class="diagram-caption">Gateway and microservices register with the service registry for dynamic
+                discovery.</p>
         </div>
 
+
+
     </section>
+
+
+
 
 
 
     <!-- ===================================================
      DESIGN DECISIONS
      =================================================== -->
+
+    <section class="section">
+
+        <div class="section-tag">Reliability and Scale</div>
+
+        <h2>Error handling and pagination</h2>
+
+        <div class="communication-grid">
+            <div class="communication-card">
+                <div class="communication-icon">!</div>
+                <h3>Global error handling</h3>
+                <p>Central exception handlers convert validation, authorization, missing-resource and downstream
+                    failures into consistent API responses.</p>
+                <div class="flow-line">Exception → Structured status + message</div>
+            </div>
+            <div class="communication-card">
+                <div class="communication-icon">#</div>
+                <h3>Server-side pagination</h3>
+                <p>Product APIs accept page, size and sort parameters so the client retrieves manageable result sets
+                    without loading the full catalog.</p>
+                <div class="flow-line">?page=0&amp;size=12&amp;sort=name,asc</div>
+            </div>
+        </div>
+
+    </section>
 
     <section class="section">
 
@@ -2342,6 +2059,33 @@
     <!-- ===================================================
      TECH STACK
      =================================================== -->
+
+    <section class="section">
+
+        <div class="section-tag">Roadmap</div>
+
+        <h2>Future enhancements</h2>
+
+        <div class="decision-grid">
+            <div class="decision-card">
+                <h3>Notification Service</h3>
+                <p>Consume order events and deliver transactional email notifications asynchronously.</p>
+            </div>
+            <div class="decision-card">
+                <h3>Resilience patterns</h3>
+                <p>Add timeouts, retries and circuit breakers around downstream service calls.</p>
+            </div>
+            <div class="decision-card">
+                <h3>Observability</h3>
+                <p>Introduce distributed tracing, centralized logs, metrics and alerting across services.</p>
+            </div>
+            <div class="decision-card">
+                <h3>Automated delivery</h3>
+                <p>Expand integration tests and CI/CD pipelines for repeatable independent deployments.</p>
+            </div>
+        </div>
+
+    </section>
 
     <section class="section">
 

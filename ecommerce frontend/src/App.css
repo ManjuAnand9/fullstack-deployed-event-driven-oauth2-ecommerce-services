@@ -3815,3 +3815,10 @@ button {
   margin: 0 auto;
   object-fit: contain;
 }
+
+.workflow-link {
+  position: relative;
+  z-index: 10;
+  pointer-events: auto;
+  cursor: pointer;
+}
